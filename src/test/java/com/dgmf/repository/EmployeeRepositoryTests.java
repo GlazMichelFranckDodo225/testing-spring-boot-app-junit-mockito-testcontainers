@@ -210,4 +210,27 @@ public class EmployeeRepositoryTests {
         assertThat(savedEmployee.getFirstName()).isEqualTo("John");
         assertThat(savedEmployee.getLastName()).isEqualTo("Doe");
     }
+
+    // JUnit Test for Custom Query using Native JPQL with Index Params
+    @Test
+    @DisplayName("JUnit Test for Custom Query using Native JPQL with Index Params")
+    void givenFirstNameAndLastName_whenFindByNativeSQL_thenReturnEmployeeObject() {
+        // Given - Precondition or Setup
+        Employee employee = Employee.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe.com")
+                .build();
+
+        employeeRepository.save(employee);
+
+        // When - Action or the Behavior that we are going to test
+        Employee savedEmployee = employeeRepository
+                .findByNativeSQL(employee.getFirstName(), employee.getLastName());
+
+        // Then - Verify the Output
+        assertThat(savedEmployee).isNotNull();
+        assertThat(savedEmployee.getFirstName()).isEqualTo("John");
+        assertThat(savedEmployee.getLastName()).isEqualTo("Doe");
+    }
 }
