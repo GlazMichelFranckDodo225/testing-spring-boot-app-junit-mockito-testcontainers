@@ -4,15 +4,17 @@ import com.dgmf.entity.Employee;
 import com.dgmf.exception.ResourceNotFoundException;
 import com.dgmf.repository.EmployeeRepository;
 import com.dgmf.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    // @Autowired
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public Employee saveEmployee(Employee employee) {
