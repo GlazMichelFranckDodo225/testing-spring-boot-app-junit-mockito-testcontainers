@@ -3,28 +3,35 @@ package com.dgmf.service;
 import com.dgmf.entity.Employee;
 import com.dgmf.repository.EmployeeRepository;
 import com.dgmf.service.impl.EmployeeServiceImpl;
-import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+@ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
+    // private EmployeeRepository employeeRepository;
+    // private EmployeeService employeeService;
+    @Mock
     private EmployeeRepository employeeRepository;
-    private EmployeeService employeeService;
+    @InjectMocks
+    private EmployeeServiceImpl employeeService;
 
     // This Method will be executed before each JUnit Test belongs
     // to the "EmployeeServiceTest" Class
     @BeforeEach
     public void setup() {
         // Mock "EmployeeRepository"
-        employeeRepository = Mockito.mock(EmployeeRepository.class);
+        // employeeRepository = Mockito.mock(EmployeeRepository.class);
         // Inject "EmployeeRepository" in "EmployeeService"
-        employeeService = new EmployeeServiceImpl(employeeRepository);
+        // employeeService = new EmployeeServiceImpl(employeeRepository);
     }
 
     // JUnit Test for Save Employee Method
