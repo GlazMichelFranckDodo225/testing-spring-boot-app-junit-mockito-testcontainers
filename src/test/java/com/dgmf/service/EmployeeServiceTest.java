@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import static org.mockito.BDDMockito.given;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,21 +17,23 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
-    // private EmployeeRepository employeeRepository;
-    // private EmployeeService employeeService;
-    @Mock
+    @Mock // Mock "EmployeeRepository"
     private EmployeeRepository employeeRepository;
-    @InjectMocks
+    @InjectMocks // Inject "EmployeeRepository" in "EmployeeService"
     private EmployeeServiceImpl employeeService;
+    private Employee employee;
 
     // This Method will be executed before each JUnit Test belongs
     // to the "EmployeeServiceTest" Class
     @BeforeEach
     public void setup() {
-        // Mock "EmployeeRepository"
-        // employeeRepository = Mockito.mock(EmployeeRepository.class);
-        // Inject "EmployeeRepository" in "EmployeeService"
-        // employeeService = new EmployeeServiceImpl(employeeRepository);
+        // Create Employee Object
+        employee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Doe")
+                .email("johndoe@gmail.com")
+                .build();
     }
 
     // JUnit Test for Save Employee Method
@@ -39,22 +41,15 @@ public class EmployeeServiceTest {
     @DisplayName("JUnit Test for Save Employee Method")
     void givenEmployeeObject_whenSaveEmployee_thenReturnEmployeeObject() {
         /* Given - Precondition or Setup */
-        // Create Employee Object
-        Employee employee = Employee.builder()
-                .id(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .email("johndoe@gmail.com")
-                .build();
+        // Condition met by the "setup()" method above
 
-        // To Stub (to Mock) "findEmployeeByEmail()" Method of "EmployeeRepository"
-        BDDMockito
-                .given(employeeRepository.findEmployeeByEmail(employee.getEmail()))
+        // To Stub (to Mock) "findEmployeeByEmail()" Method
+        // of "EmployeeRepository" (Static Import)
+        given(employeeRepository.findEmployeeByEmail(employee.getEmail()))
                 .willReturn(Optional.empty());
 
-        // To Stub (to Mock) "save()" Method of "EmployeeRepository"
-        BDDMockito
-                .given(employeeRepository.save(employee))
+        // To Stub (to Mock) "save()" Method of "EmployeeRepository" (Static Import)
+        given(employeeRepository.save(employee))
                 .willReturn(employee);
 
         // Custom Outputs
