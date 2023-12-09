@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,5 +105,29 @@ public class EmployeeServiceTest {
         // "employeeRepository.save(employee)" was never called into
         // "saveEmployee()" Method of the "EmployeeServiceImpl" Class
         verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    // JUnit Test for Get All Employees Method
+    @Test
+    @DisplayName("JUnit Test for Get All Employees Method")
+    void givenEmployeesList_whenGetAllEmployees_thenReturnEmployeesList() {
+        // Given - Precondition or Setup
+        // Create Employee Object
+        Employee employee2 = Employee.builder()
+                .id(2L)
+                .firstName("Mark")
+                .lastName("Irish")
+                .email("markirish@gmail.com")
+                .build();
+
+        given(employeeRepository.findAll())
+                .willReturn(List.of(employee, employee2));
+
+        // When - Action or the Behavior that we are going to test
+        List<Employee> employeeList = employeeService.getAllEmployees();
+
+        // Then - Verify the Output
+        Assertions.assertThat(employeeList).isNotNull();
+        Assertions.assertThat(employeeList.size()).isEqualTo(2);
     }
 }
