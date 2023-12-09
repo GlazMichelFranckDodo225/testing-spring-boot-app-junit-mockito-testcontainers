@@ -42,4 +42,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employees;
     }
+
+    @Override
+    public Optional<Employee> getEmployeeById(Long employeeId) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+
+        return optionalEmployee;
+    }
 }

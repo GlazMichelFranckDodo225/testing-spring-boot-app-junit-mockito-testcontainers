@@ -4,7 +4,8 @@ import com.dgmf.entity.Employee;
 import com.dgmf.exception.ResourceNotFoundException;
 import com.dgmf.repository.EmployeeRepository;
 import com.dgmf.service.impl.EmployeeServiceImpl;
-import org.assertj.core.api.Assertions;
+// import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,8 @@ public class EmployeeServiceTest {
         System.out.println(saveEmployee);
 
         /* Then - Verify the Output */
-        Assertions.assertThat(saveEmployee).isNotNull();
+        // Assertions.assertThat(saveEmployee).isNotNull();
+        assertThat(saveEmployee).isNotNull();
     }
 
     // JUnit Test for Save Employee Method which throws Exception
@@ -128,8 +130,10 @@ public class EmployeeServiceTest {
         List<Employee> employeeList = employeeService.getAllEmployees();
 
         // Then - Verify the Output
-        Assertions.assertThat(employeeList).isNotNull();
-        Assertions.assertThat(employeeList.size()).isEqualTo(2);
+        /*Assertions.assertThat(employeeList).isNotNull();
+        Assertions.assertThat(employeeList.size()).isEqualTo(2);*/
+        assertThat(employeeList).isNotNull();
+        assertThat(employeeList.size()).isEqualTo(2);
     }
 
     // JUnit Test for Get All Employees Method - Negative Scenario
@@ -152,7 +156,25 @@ public class EmployeeServiceTest {
         List<Employee> employeeList = employeeService.getAllEmployees();
 
         // Then - Verify the Output
-        Assertions.assertThat(employeeList).isEmpty();
-        Assertions.assertThat(employeeList.size()).isEqualTo(0);
+        /*Assertions.assertThat(employeeList).isEmpty();
+        Assertions.assertThat(employeeList.size()).isEqualTo(0);*/
+        assertThat(employeeList).isEmpty();
+        assertThat(employeeList.size()).isEqualTo(0);
+    }
+
+    // JUnit Test for Get Employee By Id Method
+    @Test
+    @DisplayName("JUnit Test for Get Employee By Id Method")
+    void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() {
+        // Given - Precondition or Setup
+        given(employeeRepository.findById(1L)).willReturn(Optional.of(employee));
+
+        // When - Action or the Behavior that we are going to test
+        Employee savedEmployee =
+                employeeService.getEmployeeById(employee.getId()).get();
+
+        // Then - Verify the Output
+        // Assertions.assertThat(savedEmployee).isNotNull();
+        assertThat(savedEmployee).isNotNull();
     }
 }
