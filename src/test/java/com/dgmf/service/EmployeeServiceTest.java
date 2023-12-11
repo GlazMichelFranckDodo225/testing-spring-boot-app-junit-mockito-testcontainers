@@ -13,8 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -183,7 +183,7 @@ public class EmployeeServiceTest {
     @DisplayName("JUnit Test for Update Employee Method")
     void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
         // Given - Precondition or Setup
-        // To Stub Employee Repository "save()" Method and Configure the
+        // To Stub JpaRepository Repository "save()" Method and Configure the
         // Response for this Method
         given(employeeRepository.save(employee)).willReturn(employee);
         // Update Employee
@@ -198,5 +198,27 @@ public class EmployeeServiceTest {
                 .isEqualTo("Jonatan");
         assertThat(updatedemployee.getEmail())
                 .isEqualTo("jonatandoe@gmail.com");
+    }
+
+    // JUnit Test for Delete Employee By Id Method
+    // Remind that the Return Type of "deleteById()" JpaRepository
+    // Method is "void" (Nothing)
+    @Test
+    @DisplayName("JUnit Test for Delete Employee By Id Method")
+    void givenEmployeeId_whenDeleteEmployeeById_thenReturnNothing() {
+        // Given - Precondition or Setup
+        Long employeeId = 1L;
+
+        // To Stub JpaRepository Repository "deleteById()" Method and Configure
+        // the Response for this Method
+        willDoNothing().given(employeeRepository).deleteById(employeeId);
+
+        // When - Action or the Behavior that we are going to test
+        employeeService.deleteEmployeeById(employeeId);
+
+        // Then - Verify the Output
+        // Checks that the Method has been called at least 1 time
+        verify(employeeRepository, times(1))
+                .deleteById(employeeId);
     }
 }
