@@ -1,0 +1,31 @@
+package com.dgmf.controller;
+
+import com.dgmf.entity.Employee;
+import com.dgmf.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+// @RequestMapping(value = "/api/v1/employees", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+    private final EmployeeService employeeService;
+
+    /*@PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Employee createEmployee(@RequestBody Employee employee) {
+        return employeeService.saveEmployee(employee);
+    }*/
+    @PostMapping
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+        return new ResponseEntity<>(
+                employeeService.saveEmployee(employee),
+                HttpStatus.CREATED
+        );
+    }
+
+}
