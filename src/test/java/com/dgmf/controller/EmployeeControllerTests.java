@@ -3,23 +3,23 @@ package com.dgmf.controller;
 import com.dgmf.entity.Employee;
 import com.dgmf.service.EmployeeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import static org.mockito.BDDMockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest
@@ -48,6 +48,7 @@ public class EmployeeControllerTests {
 
         // To Stub (to Mock) "saveEmployee()" Method
         // of "Employee Service" (Static Import)
+        // "any()" Method ==> Ambiguity with Static Import
         given(employeeService.saveEmployee(ArgumentMatchers.any(Employee.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -66,24 +67,24 @@ public class EmployeeControllerTests {
         // Verify HTTP Status "201 CREATED" in the Response
         response
                 // To Print the Response of the REST API into the Console
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 // Verify HTTP Status "201 CREATED" in the Response
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 // Using JSON Path Method to Check Actual Value ("$.firstName" and so on)
                 // with the Expected Value ("employee.getFirstName()" and so on)
-                .andExpect(MockMvcResultMatchers.jsonPath(
+                .andExpect(jsonPath(
                         "$.firstName",
-                        CoreMatchers.is(employee.getFirstName())
+                        is(employee.getFirstName())
                     )
                 )
-                .andExpect(MockMvcResultMatchers.jsonPath(
+                .andExpect(jsonPath(
                                 "$.lastName",
-                                CoreMatchers.is(employee.getLastName())
+                                is(employee.getLastName())
                         )
                 )
-                .andExpect(MockMvcResultMatchers.jsonPath(
+                .andExpect(jsonPath(
                                 "$.email",
-                                CoreMatchers.is(employee.getEmail())
+                                is(employee.getEmail())
                         )
                 );
     }
@@ -117,14 +118,14 @@ public class EmployeeControllerTests {
         // Then - Verify the Output
         response
                 // To Print the Response of the REST API into the Console
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 // Verify HTTP Status "200 OK" in the Response
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 // Using JSON Path Method to Check the Size of the
                 // Returned JSON Array
-                .andExpect(MockMvcResultMatchers.jsonPath(
+                .andExpect(jsonPath(
                                 "$.size()",
-                                CoreMatchers.is(employees.size())
+                                is(employees.size())
                         )
                 );
     }
