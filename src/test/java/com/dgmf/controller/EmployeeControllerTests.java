@@ -17,6 +17,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest
@@ -82,7 +85,47 @@ public class EmployeeControllerTests {
                                 "$.email",
                                 CoreMatchers.is(employee.getEmail())
                         )
-                )
-        ;
+                );
+    }
+
+    // JUnit Test for Get All Employees REST API
+    @Test
+    @DisplayName("JUnit Test for Get All Employees REST API")
+    void givenListOfEmployees_whenGetAllEmployees_thenReturnEmployeesList()
+            throws Exception {
+        // Given - Precondition or Setup
+        List<Employee> employees = new ArrayList<>();
+        employees.add(Employee.builder()
+                        .firstName("Gillian")
+                        .lastName("Barré")
+                        .email("gillianbarre@gmail.com")
+                        .build());
+
+        employees.add(Employee.builder()
+                        .firstName("Tony")
+                        .lastName("Stark")
+                        .email("tonystark@gmail.com")
+                        .build());
+
+        // To Stub "employeeService.getAllEmployees()" Method and Prepare
+        // a Proper Response for this Method
+        given(employeeService.getAllEmployees()).willReturn(employees);
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(get("/api/v1/employees"));
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(MockMvcResultHandlers.print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                // Using JSON Path Method to Check the Size of the
+                // Returned JSON Array
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                                "$.size()",
+                                CoreMatchers.is(employees.size())
+                        )
+                );
     }
 }
