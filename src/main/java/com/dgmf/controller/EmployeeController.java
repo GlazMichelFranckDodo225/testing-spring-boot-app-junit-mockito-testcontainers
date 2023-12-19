@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 // @RequestMapping(value = "/api/v1/employees", consumes = MediaType.APPLICATION_JSON_VALUE)
 @RequestMapping(value = "/api/v1/employees")
@@ -26,6 +28,11 @@ public class EmployeeController {
                 employeeService.saveEmployee(employee),
                 HttpStatus.CREATED
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
 }
