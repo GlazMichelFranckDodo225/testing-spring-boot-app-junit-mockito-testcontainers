@@ -39,6 +39,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> getEmployeeById(
             @PathVariable("id") Long employeeId
     ) {
+        // Notice: "getEmployeeById" return Optional Employee from Service Layer
         return employeeService.getEmployeeById(employeeId)
                 // To Configure Response Status Code
                 .map(ResponseEntity::ok)

@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -126,6 +127,57 @@ public class EmployeeControllerTests {
                 .andExpect(jsonPath(
                                 "$.size()",
                                 is(employees.size())
+                        )
+                );
+    }
+
+    // JUnit Test for Get Employee By Id REST API
+    //  Positive Scenario with Valid Employee Id
+    @Test
+    @DisplayName("JUnit Test for Get Employee By Id REST API")
+    void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() throws Exception {
+        // Given - Precondition or Setup
+        // Given Id
+        Long employeeId = 1L;
+        // Employee to Recover
+        Employee employee = Employee.builder()
+                .firstName("Manuel")
+                .lastName("Ortega")
+                .email("manuelortega@gmail.com")
+                .build();
+
+        // To Mock "employeeService.getEmployeeById()" Method
+        given(employeeService.getEmployeeById(employeeId))
+                .willReturn(Optional.of(employee));
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(get(
+                "/api/v1/employees/{id}",
+                employeeId
+            )
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(status().isOk())
+                // Using JSON Path Method to Verify the Actual
+                // Value with the Expected Value
+                .andExpect(jsonPath(
+                                "$.firstName",
+                                is(employee.getFirstName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.lastName",
+                                is(employee.getLastName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.email",
+                                is(employee.getEmail())
                         )
                 );
     }
