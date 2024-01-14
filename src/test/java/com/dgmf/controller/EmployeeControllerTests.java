@@ -181,4 +181,37 @@ public class EmployeeControllerTests {
                         )
                 );
     }
+
+    // JUnit Test for Get Employee By Id REST API
+    //  Negative Scenario with No Valid Employee Id
+    @Test
+    @DisplayName("JUnit Test for Get Employee By Id REST API")
+    void givenInvalidEmployeeId_whenGetEmployeeById_thenReturnEmpty()
+            throws Exception {
+        // Given - Precondition or Setup
+        // Given Id
+        Long employeeId = 1L;
+        // Employee to Recover
+        Employee employee = Employee.builder()
+                .firstName("Manuel")
+                .lastName("Ortega")
+                .email("manuelortega@gmail.com")
+                .build();
+
+        // To Mock "employeeService.getEmployeeById()" Method
+        given(employeeService.getEmployeeById(employeeId))
+                .willReturn(Optional.empty());
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                get("/api/v1/employees/{id}", employeeId)
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "404 NOT FOUND" in the Response
+                .andExpect(status().isNotFound());
+    }
 }
