@@ -5,7 +5,6 @@ import com.dgmf.exception.ResourceNotFoundException;
 import com.dgmf.repository.EmployeeRepository;
 import com.dgmf.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,14 +44,30 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Optional<Employee> getEmployeeById(Long employeeId) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+        Optional<Employee> optionalEmployee = employeeRepository
+                .findById(employeeId);
 
         return optionalEmployee;
     }
 
     @Override
-    public Employee updateEmployee(Employee updatedEmployee) {
-        Employee savedEmployee = employeeRepository.save(updatedEmployee);
+    public Employee updateEmployee(
+            Long employeeId, Employee employee
+    ) {
+        // Retrieve Employee from The DB
+        Employee foundEmployee =
+                employeeRepository.findById(employeeId)
+                        .orElseThrow(() -> new RuntimeException(
+                                "Employee with Id " + employeeId +
+                                        " NOT FOUND"
+                        )
+                );
+
+        foundEmployee.setFirstName(employee.getFirstName());
+        foundEmployee.setLastName(employee.getLastName());
+        foundEmployee.setEmail(employee.getEmail());
+
+        Employee savedEmployee = employeeRepository.save(foundEmployee);
 
         return savedEmployee;
     }

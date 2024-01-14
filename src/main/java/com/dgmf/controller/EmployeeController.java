@@ -39,11 +39,24 @@ public class EmployeeController {
     public ResponseEntity<Employee> getEmployeeById(
             @PathVariable("id") Long employeeId
     ) {
-        // Notice: "getEmployeeById" return Optional Employee from Service Layer
+        // Notice: "getEmployeeById" return Optional Employee from
+        // Service Layer
         return employeeService.getEmployeeById(employeeId)
                 // To Configure Response Status Code
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable("id") Long employeeId,
+            @RequestBody Employee employee
+    ) {
+        // Notice: "getEmployeeById" return Optional Employee from
+        // Service Layer
+        return ResponseEntity.ok(
+                employeeService.updateEmployee(employeeId, employee)
+        );
     }
 
 }
