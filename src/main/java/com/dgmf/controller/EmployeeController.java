@@ -27,7 +27,8 @@ public class EmployeeController {
         return new ResponseEntity<>(
                 employeeService.saveEmployee(employee),
                 HttpStatus.CREATED
-        );
+        )
+                ;
     }
 
     @GetMapping

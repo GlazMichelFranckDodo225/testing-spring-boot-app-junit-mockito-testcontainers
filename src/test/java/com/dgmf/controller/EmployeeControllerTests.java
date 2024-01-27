@@ -214,4 +214,65 @@ public class EmployeeControllerTests {
                 // Verify HTTP Status "404 NOT FOUND" in the Response
                 .andExpect(status().isNotFound());
     }
+
+    // JUnit Test for Update Employee REST API - Positive Scenario
+    @Test
+    @DisplayName("JUnit Test for Update Employee REST API - Positive Scenario")
+    void givenEmployeeFromDb_whenUpdateEmployee_thenReturnUpdatedEmployee()
+            throws Exception {
+        // Given - Precondition or Setup
+        Long employeeId = 3L;
+        // Employee From DB
+        Employee employeeFromDb = Employee.builder()
+                .firstName("Ivan")
+                .lastName("Attal")
+                .email("ivanattal@gmail.com")
+                .build();
+
+        // Requested Employee
+        Employee requestedEmployee = Employee.builder()
+                .firstName("Ivan - UPDATED")
+                .lastName("Attal - UPDATED")
+                .email("ivanattal.updated@gmail.com")
+                .build();
+
+        // To Stub Method Call
+        given(
+                employeeService.updateEmployee(employeeId, requestedEmployee)
+        )
+                .willReturn(employeeFromDb)
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/employees/{id}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(requestedEmployee)
+                        )
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "404 NOT FOUND" in the Response
+                .andExpect(status().isOk())
+                // Value with the Expected Value
+                .andExpect(jsonPath(
+                                "$.firstName",
+                                is(requestedEmployee.getFirstName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.lastName",
+                                is(requestedEmployee.getLastName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.email",
+                                is(requestedEmployee.getEmail())
+                        )
+                );
+    }
 }
