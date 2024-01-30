@@ -191,8 +191,7 @@ public class EmployeeServiceTest {
         employee.setEmail("jonatandoe@gmail.com");
 
         // When - Action or the Behavior that we are going to test
-        Employee updatedemployee = employeeService.updateEmployee(
-                employee.getId(), employee);
+        Employee updatedemployee = employeeService.updateEmployee(employee);
 
         // Then - Verify the Output
         assertThat(updatedemployee.getFirstName())

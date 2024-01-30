@@ -25,16 +25,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest
 public class EmployeeControllerTests {
-    // To call REST API
-    @Autowired
-    private MockMvc mockMvc;
+    /* ============== FIELDS ============== */
     // To mock Employee Service
     @MockBean
     private EmployeeService employeeService;
-    // To Serialize and Deserialize Java Objects
+    // To call REST APIs
+    @Autowired
+    private MockMvc mockMvc;
+    // To Serialize and Deserialize Java Objects (Jackson Class)
     @Autowired
     private ObjectMapper objectMapper;
 
+    /* ============== START OF TESTS ============== */
     // JUnit Test for Create Employee REST API
     @Test
     @DisplayName("JUnit Test for Create Employee REST API")
@@ -42,13 +44,14 @@ public class EmployeeControllerTests {
             throws Exception {
         // Given - Precondition or Setup
         Employee employee = Employee.builder()
-                .firstName("Manuel")
-                .lastName("Ortega")
-                .email("manuelortega@gmail.com")
+                .firstName("Xavi")
+                .lastName("Disturb")
+                .email("xavidisturb@gmail.com")
                 .build();
 
-        // To Stub (to Mock) "saveEmployee()" Method
-        // of "Employee Service" (Static Import)
+        // To Mock "employeeService.saveEmployee(employee)" Method
+        // Presents into the "createEmployee()" Method of the EmployeeController
+        // Note ==> Static Import of "BDDMockito.given" Method
         // "any()" Method ==> Ambiguity with Static Import
         given(employeeService.saveEmployee(ArgumentMatchers.any(Employee.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
@@ -97,23 +100,28 @@ public class EmployeeControllerTests {
             throws Exception {
         // Given - Precondition or Setup
         List<Employee> employees = new ArrayList<>();
-        employees.add(Employee.builder()
-                        .firstName("Gillian")
-                        .lastName("Barré")
-                        .email("gillianbarre@gmail.com")
-                        .build());
+        employees.add(
+                Employee.builder()
+                        .firstName("Milhan")
+                        .lastName("Norton")
+                        .email("milhannorton@gmail.com")
+                        .build()
+        );
 
-        employees.add(Employee.builder()
-                        .firstName("Tony")
-                        .lastName("Stark")
-                        .email("tonystark@gmail.com")
-                        .build());
+        employees.add(
+                Employee.builder()
+                        .firstName("Jeremy")
+                        .lastName("O'hara")
+                        .email("jeremyohara@gmail.com")
+                        .build()
+        );
 
-        // To Stub "employeeService.getAllEmployees()" Method and Prepare
-        // a Proper Response for this Method
+        // To Mock "employeeService.getAllEmployees()" Method and Prepare
+        // a Proper Response for this Method (Stubbing)
         given(employeeService.getAllEmployees()).willReturn(employees);
 
         // When - Action or the Behavior that we are going to test
+        // We Have Made a Get Employees REST API Call and Retrieve the Response
         ResultActions response = mockMvc.perform(get("/api/v1/employees"));
 
         // Then - Verify the Output
@@ -218,7 +226,7 @@ public class EmployeeControllerTests {
     // JUnit Test for Update Employee REST API - Positive Scenario
     @Test
     @DisplayName("JUnit Test for Update Employee REST API - Positive Scenario")
-    void givenEmployeeFromDb_whenUpdateEmployee_thenReturnUpdatedEmployee()
+    void givenEmployeeForUpdate_whenUpdateEmployee_thenReturnUpdatedEmployeeObject()
             throws Exception {
         // Given - Precondition or Setup
         Long employeeId = 3L;
@@ -229,18 +237,24 @@ public class EmployeeControllerTests {
                 .email("ivanattal@gmail.com")
                 .build();
 
-        // Requested Employee
-        Employee requestedEmployee = Employee.builder()
+        // Employee From Request
+        Employee employeeFromRequest = Employee.builder()
                 .firstName("Ivan - UPDATED")
                 .lastName("Attal - UPDATED")
                 .email("ivanattal.updated@gmail.com")
                 .build();
 
-        // To Stub Method Call
-        given(
-                employeeService.updateEmployee(employeeId, requestedEmployee)
-        )
-                .willReturn(employeeFromDb)
+        // To Mock "employeeService.getEmployeeById()" Method (Stub Method Call)
+        given(employeeService.getEmployeeById(employeeId))
+                .willReturn(Optional.of(employeeFromDb));
+
+        // To Mock "employeeService.updateEmployee()" Method
+        given(employeeService.updateEmployee(
+                // Whatever Argument We Pass to Update Employee
+                    ArgumentMatchers.any(Employee.class)
+                    )
+                )
+                // This Argument Should Be Simply Return
                 .willAnswer(invocation -> invocation.getArgument(0));
 
         // When - Action or the Behavior that we are going to test
@@ -248,7 +262,7 @@ public class EmployeeControllerTests {
                 put("/api/v1/employees/{id}", employeeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                objectMapper.writeValueAsString(requestedEmployee)
+                                objectMapper.writeValueAsString(employeeFromRequest)
                         )
         );
 
@@ -256,22 +270,22 @@ public class EmployeeControllerTests {
         response
                 // To Print the Response of the REST API into the Console
                 .andDo(print())
-                // Verify HTTP Status "404 NOT FOUND" in the Response
+                // Verify HTTP Status "201 OK" in the Response
                 .andExpect(status().isOk())
-                // Value with the Expected Value
+                // Test Actual Value with the Expected Value
                 .andExpect(jsonPath(
                                 "$.firstName",
-                                is(requestedEmployee.getFirstName())
+                                is(employeeFromRequest.getFirstName())
                         )
                 )
                 .andExpect(jsonPath(
                                 "$.lastName",
-                                is(requestedEmployee.getLastName())
+                                is(employeeFromRequest.getLastName())
                         )
                 )
                 .andExpect(jsonPath(
                                 "$.email",
-                                is(requestedEmployee.getEmail())
+                                is(employeeFromRequest.getEmail())
                         )
                 );
     }

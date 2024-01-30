@@ -51,10 +51,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(
-            Long employeeId, Employee employee
-    ) {
-        // Retrieve Employee from The DB
+    public Employee updateEmployee(Employee updateEmployee) {
+        /*// Retrieve Employee from The DB
         Employee foundEmployee =
                 employeeRepository.findById(employeeId)
                         .orElseThrow(() -> new RuntimeException(
@@ -65,11 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         foundEmployee.setFirstName(employee.getFirstName());
         foundEmployee.setLastName(employee.getLastName());
-        foundEmployee.setEmail(employee.getEmail());
+        foundEmployee.setEmail(employee.getEmail());*/
 
-        Employee savedEmployee = employeeRepository.save(foundEmployee);
+        Employee updatedEmployee = employeeRepository.save(updateEmployee);
 
-        return savedEmployee;
+        return updatedEmployee;
     }
 
     @Override

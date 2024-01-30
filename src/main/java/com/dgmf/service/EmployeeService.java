@@ -9,6 +9,6 @@ public interface EmployeeService {
     Employee saveEmployee(Employee employee);
     List<Employee> getAllEmployees();
     Optional<Employee> getEmployeeById(Long employeeId);
-    Employee updateEmployee(Long employeeId, Employee employee);
+    Employee updateEmployee(Employee updateEmployee);
     void deleteEmployeeById(Long employeeId);
 }
