@@ -289,4 +289,55 @@ public class EmployeeControllerTests {
                         )
                 );
     }
+
+    // JUnit Test for Update Employee REST API - Negative Scenario
+    @Test
+    @DisplayName("JUnit Test for Update Employee REST API - Positive Scenario")
+    void givenEmployeeForUpdate_whenUpdateEmployee_thenReturn404()
+            throws Exception {
+        // Given - Precondition or Setup
+        Long employeeId = 3L;
+        // Employee From DB
+        Employee employeeFromDb = Employee.builder()
+                .firstName("Ivan")
+                .lastName("Attal")
+                .email("ivanattal@gmail.com")
+                .build();
+
+        // Employee From Request
+        Employee employeeFromRequest = Employee.builder()
+                .firstName("Ivan - UPDATED")
+                .lastName("Attal - UPDATED")
+                .email("ivanattal.updated@gmail.com")
+                .build();
+
+        // To Mock "employeeService.getEmployeeById()" Method (Stub Method Call)
+        given(employeeService.getEmployeeById(employeeId))
+                .willReturn(Optional.empty());
+
+        // To Mock "employeeService.updateEmployee()" Method
+        given(employeeService.updateEmployee(
+                // Whatever Argument We Pass to Update Employee
+                    ArgumentMatchers.any(Employee.class)
+                    )
+                )
+                // This Argument Should Be Simply Return
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/employees/{id}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(employeeFromRequest)
+                        )
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "404 NOT FOUND" in the Response
+                .andExpect(status().isNotFound());
+    }
 }
