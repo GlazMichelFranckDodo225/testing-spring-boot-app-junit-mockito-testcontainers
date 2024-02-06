@@ -214,7 +214,7 @@ public class EmployeeServiceTest {
         willDoNothing().given(employeeRepository).deleteById(employeeId);
 
         // When - Action or the Behavior that we are going to test
-        employeeService.deleteEmployeeById(employeeId);
+        employeeService.deleteEmployee(employeeId);
 
         // Then - Verify the Output
         // Checks that the Method has been called at least 1 time

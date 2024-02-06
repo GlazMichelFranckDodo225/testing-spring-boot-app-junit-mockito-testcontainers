@@ -340,4 +340,26 @@ public class EmployeeControllerTests {
                 // Verify HTTP Status "404 NOT FOUND" in the Response
                 .andExpect(status().isNotFound());
     }
+
+    // JUnit Test for Delete Employee REST API
+    @Test
+    @DisplayName("JUnit Test for Delete Employee REST API")
+    void givenEmployeeId_whenDeleteEmployee_thenReturn200() throws Exception {
+        // Given - Precondition or Setup
+        // To Mock "employeeService.deleteEmployee()" Method
+        Long employeeId = 5L;
+        willDoNothing().given(employeeService).deleteEmployee(employeeId);
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                delete("/api/v1/employees/{id}", employeeId)
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(status().isOk());
+    }
 }
