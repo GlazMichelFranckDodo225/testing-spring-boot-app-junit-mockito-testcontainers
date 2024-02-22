@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
@@ -138,5 +139,86 @@ public class EmployeeControllerIntegrationTests {
                                 is(employees.size())
                         )
                 );
+    }
+
+    // Integration Test for Get Employee By Id REST API
+    //  Positive Scenario with Valid Employee Id
+    @Test
+    @DisplayName("Integration Test for Get Employee By Id REST API")
+    void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() throws Exception {
+        // Given - Precondition or Setup
+        // Given Id
+        // Long employeeId = 1L;
+        // Employee to Recover
+        Employee employee = Employee.builder()
+                .firstName("Manuel")
+                .lastName("Ortega")
+                .email("manuelortega@gmail.com")
+                .build();
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(get(
+                        "/api/v1/employees/{id}",
+                        //employeeId
+                        savedEmployee.getId()
+                )
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(status().isOk())
+                // Using JSON Path Method to Verify the Actual
+                // Value with the Expected Value
+                .andExpect(jsonPath(
+                                "$.firstName",
+                                is(employee.getFirstName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.lastName",
+                                is(employee.getLastName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.email",
+                                is(employee.getEmail())
+                        )
+                );
+    }
+
+    // Integration Test for Get Employee By Id REST API
+    //  Negative Scenario with No Valid Employee Id
+    @Test
+    @DisplayName("Integration Test for Get Employee By Id REST API")
+    void givenInvalidEmployeeId_whenGetEmployeeById_thenReturnEmpty()
+            throws Exception {
+        // Given - Precondition or Setup
+        // Given Id
+        Long employeeId = 1L; // This Id Doesn't Exist into DB
+        // Employee to Recover
+        Employee employee = Employee.builder()
+                .firstName("Manuel")
+                .lastName("Ortega")
+                .email("manuelortega@gmail.com")
+                .build();
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                get("/api/v1/employees/{id}", employeeId)
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "404 NOT FOUND" in the Response
+                .andExpect(status().isNotFound());
     }
 }
