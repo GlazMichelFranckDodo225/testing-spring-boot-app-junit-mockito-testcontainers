@@ -14,8 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -92,4 +96,47 @@ public class EmployeeControllerIntegrationTests {
                 );
     }
 
+    // Integration Test for Get All Employees REST API
+    @Test
+    @DisplayName("Integration Test for Get All Employees REST API")
+    void givenListOfEmployees_whenGetAllEmployees_thenReturnEmployeesList()
+            throws Exception {
+        // Given - Precondition or Setup
+        List<Employee> employees = new ArrayList<>();
+        employees.add(
+                Employee.builder()
+                        .firstName("Milhan")
+                        .lastName("Norton")
+                        .email("milhannorton@gmail.com")
+                        .build()
+        );
+
+        employees.add(
+                Employee.builder()
+                        .firstName("Jeremy")
+                        .lastName("O'hara")
+                        .email("jeremyohara@gmail.com")
+                        .build()
+        );
+
+        List<Employee> savedEmployees = employeeRepository.saveAll(employees);
+
+        // When - Action or the Behavior that we are going to test
+        // We Have Made a Get Employees REST API Call and Retrieve the Response
+        ResultActions response = mockMvc.perform(get("/api/v1/employees"));
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(status().isOk())
+                // Using JSON Path Method to Check the Size of the
+                // Returned JSON Array
+                .andExpect(jsonPath(
+                                "$.size()",
+                                is(employees.size())
+                        )
+                );
+    }
 }
