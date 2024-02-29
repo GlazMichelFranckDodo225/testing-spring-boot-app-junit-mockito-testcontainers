@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +15,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -310,5 +307,30 @@ public class EmployeeControllerIntegrationTests {
                 .andDo(print())
                 // Verify HTTP Status "404 NOT FOUND" in the Response
                 .andExpect(status().isNotFound());
+    }
+
+    // Integration Test for Delete Employee REST API
+    @Test
+    @DisplayName("Integration Test for Delete Employee REST API")
+    void givenEmployeeId_whenDeleteEmployee_thenReturn200() throws Exception {
+        // Given - Precondition or Setup
+        Employee employee = Employee.builder()
+                .firstName("Ivan")
+                .lastName("Attal")
+                .email("ivanattal@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                delete("/api/v1/employees/{id}", savedEmployee.getId())
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "200 OK" in the Response
+                .andExpect(status().isOk());
     }
 }
