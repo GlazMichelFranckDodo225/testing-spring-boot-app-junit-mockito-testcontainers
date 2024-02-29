@@ -20,8 +20,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -212,6 +211,97 @@ public class EmployeeControllerIntegrationTests {
         // When - Action or the Behavior that we are going to test
         ResultActions response = mockMvc.perform(
                 get("/api/v1/employees/{id}", employeeId)
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "404 NOT FOUND" in the Response
+                .andExpect(status().isNotFound());
+    }
+
+    // Integration Test for Update Employee REST API - Positive Scenario
+    @Test
+    @DisplayName("Integration Test for Update Employee REST API - Positive Scenario")
+    void givenEmployeeForUpdate_whenUpdateEmployee_thenReturnUpdatedEmployeeObject()
+            throws Exception {
+        // Given - Precondition or Setup
+        Employee employee = Employee.builder()
+                .firstName("Ivan")
+                .lastName("Attal")
+                .email("ivanattal@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // Employee From Request
+        Employee employeeFromRequest = Employee.builder()
+                .firstName("Ivan - UPDATED")
+                .lastName("Attal - UPDATED")
+                .email("ivanattal.updated@gmail.com")
+                .build();
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/employees/{id}", savedEmployee.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(employeeFromRequest)
+                        )
+        );
+
+        // Then - Verify the Output
+        response
+                // To Print the Response of the REST API into the Console
+                .andDo(print())
+                // Verify HTTP Status "201 OK" in the Response
+                .andExpect(status().isOk())
+                // Test Actual Value with the Expected Value
+                .andExpect(jsonPath(
+                                "$.firstName",
+                                is(employeeFromRequest.getFirstName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.lastName",
+                                is(employeeFromRequest.getLastName())
+                        )
+                )
+                .andExpect(jsonPath(
+                                "$.email",
+                                is(employeeFromRequest.getEmail())
+                        )
+                );
+    }
+
+    // Integration Test for Update Employee REST API - Negative Scenario
+    @Test
+    @DisplayName("Integration Test for Update Employee REST API - Negative Scenario")
+    void givenEmployeeForUpdate_whenUpdateEmployee_thenReturn404()
+            throws Exception {
+        // Given - Precondition or Setup
+        Long employeeId = 1L;
+        Employee employee = Employee.builder()
+                .firstName("Ivan")
+                .lastName("Attal")
+                .email("ivanattal@gmail.com")
+                .build();
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // Employee From Request
+        Employee employeeFromRequest = Employee.builder()
+                .firstName("Ivan - UPDATED")
+                .lastName("Attal - UPDATED")
+                .email("ivanattal.updated@gmail.com")
+                .build();
+
+        // When - Action or the Behavior that we are going to test
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/employees/{id}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(employeeFromRequest)
+                        )
         );
 
         // Then - Verify the Output
