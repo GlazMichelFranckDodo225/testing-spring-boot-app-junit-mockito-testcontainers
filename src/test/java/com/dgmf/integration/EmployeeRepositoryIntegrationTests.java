@@ -1,18 +1,23 @@
-package com.dgmf.repository;
+package com.dgmf.integration;
 
 import com.dgmf.entity.Employee;
-import static org.assertj.core.api.Assertions.assertThat;
+import com.dgmf.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 import java.util.Optional;
 
-@DataJpaTest // Use In-memory H2 Database
-public class EmployeeRepositoryTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DataJpaTest
+// To Disable In-memory H2 Database Support and Use MySQL Database
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class EmployeeRepositoryIntegrationTests {
     @Autowired
     private EmployeeRepository employeeRepository;
     private Employee employee;
@@ -73,7 +78,7 @@ public class EmployeeRepositoryTests {
 
         // Then - Verify the Output
         assertThat(employeesList).isNotNull();
-        assertThat(employeesList.size()).isEqualTo(2);
+        assertThat(employeesList.size()).isEqualTo(3);
     }
 
     // JUnit Test for Get Employee By Id Operation
