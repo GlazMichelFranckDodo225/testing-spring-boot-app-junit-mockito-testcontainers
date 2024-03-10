@@ -36,7 +36,11 @@ public class EmployeeControllerIntegrationTestContainers {
     // this Container
     @Container
     private static final MySQLContainer MySQL_CONTAINER =
-            new MySQLContainer("mysql:latest");
+            new MySQLContainer("mysql:latest")
+                    // To Configure Testcontainers Database Properties
+                    .withDatabaseName("ems")
+                    .withUsername("username")
+                    .withPassword("12345");
     // Injecting MockMvc Class to Make HTTP Requests using
     // "perform()" Method
     @Autowired
