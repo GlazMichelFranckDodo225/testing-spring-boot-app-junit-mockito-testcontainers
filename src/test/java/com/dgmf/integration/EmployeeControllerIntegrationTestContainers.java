@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc // To Call REST APIs
 public class EmployeeControllerIntegrationTestContainers {
+    // Deploying MySQL DB in Docker Container
     // This Test Container Will Be Shared Between Test Methods
     // @Testcontainers Annotation Will Manage the Life Cycle of
     // this Container
@@ -52,6 +55,32 @@ public class EmployeeControllerIntegrationTestContainers {
     // To Serialize and Deserialize Objects (Jackson Library)
     @Autowired
     private ObjectMapper objectMapper;
+
+    // To Link MySQL Docker Container with ApplicationContext and
+    // Be Able to Dynamically Fetch Value from MySQL Container in
+    // Order to Add that Value into ApplicationContext
+    @DynamicPropertySource
+    public static void dynamicPropertySource(
+            // To Registry Username and Password in this Class
+            DynamicPropertyRegistry dynamicPropertyRegistry
+    ) {
+        // Fetch Values from MySQL Container and
+        // Add to the "dynamicPropertyRegistry" (or ApplicationContext)
+        // Key Comes from "application.properties" file
+        dynamicPropertyRegistry.add(
+                "spring.datasource.url",
+                MySQL_CONTAINER::getJdbcUrl
+        );
+        // Add Username and Password
+        dynamicPropertyRegistry.add(
+                "spring.datasource.username",
+                MySQL_CONTAINER::getUsername
+        );
+        dynamicPropertyRegistry.add(
+                "spring.datasource.password",
+                MySQL_CONTAINER::getPassword
+        );
+    }
 
     // Will Be Executed Before Each JUnit Test
     @BeforeEach
