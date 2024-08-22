@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc // To Call REST APIs
-public class EmployeeControllerIntegrationTests {
+public class EmployeeControllerIntegrationTests extends AbstractContainerBaseTest {
     // Injecting MockMvc Class to Make HTTP Requests using
     // "perform()" Method
     @Autowired
